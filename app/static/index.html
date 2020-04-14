@@ -7,14 +7,14 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js" crossorigin="anonymous"></script>
     <script   src="https://code.jquery.com/jquery-3.1.0.min.js"   integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s="   crossorigin="anonymous"></script>
-    <title>Ethereum Classic Phoenix Upgrade Monitor</title>
+    <title>Kotti Classic Phoenix Upgrade Monitor</title>
 </head>
 <body>
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <h1>Ethereum Classic Phoenix Upgrade Monitor</h1>
-                <p><em>Make sure to upgrade your node before the Phoenix hardfork, scheduled for around June 04, 2020, at block 10500839.</em>
+                <h1>Kotti Classic Phoenix Upgrade Monitor</h1>
+                <p><em>Make sure to upgrade your node before the Phoenix testnet hardfork, scheduled for around April 14, 2020, at block 2200013.</em>
                     <ul>
                         <li class="text-success"><a target="_blank" href="https://github.com/etclabscore/core-geth/releases">Core-Geth 1.11.0</a> or later supports Phoenix.</li>
                         <li class="text-success"><a target="_blank" href="https://github.com/hyperledger/besu/releases">Hyperledger Besu 1.4.1</a> or later supports Phoenix.</li>
@@ -24,7 +24,7 @@
                         <li class="text-danger"><del><a target="_blank" href="https://github.com/etclabscore/go-ethereum/releases">Geth Classic 6.1.2</a></del> is no longer maintained, please use <a target="_blank" href="https://github.com/etclabscore/core-geth/releases">Core-Geth</a>.</li>
                         <li class="text-danger"><del><a target="_blank" href="https://github.com/input-output-hk/mantis/releases">IOHK Mantis 1.1-rc4</a></del> is no longer maintained, please use <a target="_blank" href="https://github.com/hyperledger/besu/releases">Hyperledger Besu</a>.</li>
                     </ul>
-                    Check also the Phoenix dashboard on <a target="_blank" href="https://etcnodes.org/phoenix">etcnodes.org/phoenix</a>.
+                    Check also the Phoenix dashboard on <a target="_blank" href="https://kotti.etcnodes.org/phoenix">kotti.etcnodes.org/phoenix</a>.
                     Read the Phoenix <a target="_blank" href="https://ecips.ethereumclassic.org/ECIPs/ecip-1088">ECIP-1088</a>.
                 </p>
                 <table class="table" id="blockinfos">
@@ -131,25 +131,19 @@
         <tr>
             <th>Difficulty <span title="Difficulty of creating a block, relative to the most difficult chain." style="color: #555" class="glyphicon glyphicon-question-sign"></span></th>
             {{#latest}}
-                <td><span class="{{diffStyle}}">{{difficulty}}%</span></td>
+                <td>{{difficulty}}%</td>
             {{/latest}}
         </tr>
         <tr>
             <th>Total Difficulty <span title="Sum of block difficulty values since the fork, relative to the chain with highest total difficulty." style="color: #555" class="glyphicon glyphicon-question-sign"></span></th>
             {{#latest}}
-                <td><span class="{{tdStyle}}">{{totalDifficulty}}%</span></td>
+                <td>{{totalDifficulty}}%</td>
             {{/latest}}
         </tr>
         <tr>
             <th>Block interval <span title="Average number of seconds between blocks, for the past 100 blocks." style="color: #555" class="glyphicon glyphicon-question-sign"></span></th>
             {{#latest}}
                 <td><span class="{{intervalStyle}}">{{blockInterval}} sec</span></td>
-            {{/latest}}
-        </tr>
-        <tr>
-            <th>Hash rate <span title="Approximate number of hashes/sec computed by miners, derived from difficulty and block interval." style="color: #555" class="glyphicon glyphicon-question-sign"></span></th>
-            {{#latest}}
-                <td><span class="{{hashRateStyle}}">{{hashRate}} GH/s</span></td>
             {{/latest}}
         </tr>
     </script>

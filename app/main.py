@@ -2,6 +2,7 @@ import datetime
 import web3
 
 from web3 import Web3, HTTPProvider
+from web3.middleware import geth_poa_middleware
 from flask import Flask, request, make_response, send_file
 import heapq
 import json
@@ -13,11 +14,9 @@ graph_length = 16
 block_interval_average_len = 500
 cache_duration = 3600
 cache_blocks = 1000
-fork_total_difficulty = 934691916802069961084.0
-max_hash_rate = 1
+fork_total_difficulty = 3440564.0
 max_difficulty = 1
 max_total_difficulty = 1
-fork_hash_rate = 9046117559975.0
 app = Flask(__name__)
 app.config['PROPAGATE_EXCEPTIONS'] = True
 
@@ -64,7 +63,10 @@ def to_dict(block):
 clients = {}
 def get_client(name):
     if len(clients) == 0:
-        clients.update({name: Web3(Web3.HTTPProvider(node['url'])) for name, node in get_nodes().items()})
+        for name, node in get_nodes().items():
+            w3 = Web3(HTTPProvider(node['url']))
+            w3.middleware_onion.inject(geth_poa_middleware, layer=0)
+            clients.update({name: w3})
     return clients[name]
 
 class BlockFetcher(object):
@@ -170,11 +172,9 @@ def build_block_info(clientname):
     difficulty = latest['difficulty']
     totalDiff = latest['totalDifficulty'] - fork_total_difficulty
     blockInterval = 0
-    hashRate = 0
     diffStyle = "text-muted"
     tdStyle = "text-muted"
     intervalStyle = "text-muted"
-    hashRateStyle = "text-muted"
     earlierNumber = latestNumber - block_interval_average_len
     if earlierNumber > 0:
         try:
@@ -185,34 +185,12 @@ def build_block_info(clientname):
 
         difficulty = latest['difficulty']
         blockInterval = (latestTimestamp - earlierTimestamp) / float(block_interval_average_len)
-        hashRate = difficulty / blockInterval
-    relDiff = 100 * difficulty / float(max_difficulty)
-    if relDiff >= 100:
-        diffStyle = "text-success"
-    elif relDiff >= 80:
-        diffStyle = "text-warning"
-    else:
-        diffStyle = "text-danger"
-    relTD = 100 * totalDiff / float(max_total_difficulty)
-    if relTD >= 90:
-        tdStyle = "text-success"
-    elif relTD >= 50:
-        tdStyle = "text-warning"
-    else:
-        tdStyle = "text-danger"
-    if blockInterval <= 15 and blockInterval > 0:
+    if blockInterval <= 16 and blockInterval > 0:
         intervalStyle = "text-success"
     elif blockInterval <= 30 and blockInterval > 0:
         intervalStyle = "text-warning"
     else:
         intervalStyle = "text-danger"
-    relHashRate = hashRate / float(max_hash_rate) * 100
-    if relHashRate >= 80:
-        hashRateStyle = "text-success"
-    elif relHashRate >= 50:
-        hashRateStyle = "text-warning"
-    else:
-        hashRateStyle = "text-danger"
     clientversion = clientname.split(',')[2]
     clientfork = clientname.split(',')[1]
     forkStyle = "text-muted"
@@ -237,26 +215,20 @@ def build_block_info(clientname):
         'difficulty': difficulty,
         'totalDifficulty': totalDiff,
         'blockInterval': "%.1f" % (blockInterval,),
-        'hashRate': "%.1f" % (hashRate / 1000000000),
         'name': clientname,
         'clean': cleanname,
         'fork': clientfork,
         'version': clientversion,
         'forkStyle': forkStyle,
         'explore': get_nodes()[clientname]['explorer'] % (latest['number'],),
-        'diffStyle': diffStyle,
-        'tdStyle': tdStyle,
         'intervalStyle': intervalStyle,
-        'hashRateStyle': hashRateStyle,
     }
 
 def build_block_infos():
-    global max_hash_rate
     global max_difficulty
     global max_total_difficulty
     infos = [build_block_info(name) for name in get_nodes()]
     infos = [x for x in infos if x != None]
-    max_hash_rate = float(max(info['hashRate'] for info in infos))
     max_difficulty = float(max(info['difficulty'] for info in infos))
     max_total_difficulty = max(info['totalDifficulty'] for info in infos)
     for info in infos:
