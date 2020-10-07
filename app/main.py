@@ -2,7 +2,8 @@ import datetime
 import web3
 
 from web3 import Web3, HTTPProvider
-from web3.middleware import geth_poa_middleware #additional import needed by forkmon
+from web3.middleware import geth_poa_middleware #additional import maybe needed by forkmon
+from web3.auto.gethdev import w3 #additional import maybe needed by forkmon
 from flask import Flask, request, make_response, send_file
 import heapq
 import json
