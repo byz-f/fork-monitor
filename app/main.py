@@ -4,8 +4,7 @@ import web3
 from web3 import Web3, HTTPProvider
 from web3.middleware import geth_poa_middleware #additional import maybe needed by forkmon
 from web3.auto.gethdev import w3 #additional import maybe needed by forkmon
-# inject the poa compatibility middleware to the innermost layer
-# w3.middleware_onion.inject(geth_poa_middleware, layer=0)
+import w3.middleware_onion
 from flask import Flask, request, make_response, send_file
 import heapq
 import json
@@ -24,6 +23,8 @@ max_total_difficulty = 1
 fork_hash_rate = 9046117559975.0
 app = Flask(__name__)
 app.config['PROPAGATE_EXCEPTIONS'] = True
+
+inject(geth_poa_middleware,0)
 
 def get_nodes():
     if app.debug:
