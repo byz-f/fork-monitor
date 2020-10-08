@@ -24,7 +24,7 @@ fork_hash_rate = 9046117559975.0
 app = Flask(__name__)
 app.config['PROPAGATE_EXCEPTIONS'] = True
 
-inject(geth_poa_middleware,0)
+w3.middleware_onion.inject(geth_poa_middleware,0)
 
 def get_nodes():
     if app.debug:
